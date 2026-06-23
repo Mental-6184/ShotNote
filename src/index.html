@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: file:; img-src 'self' data: blob: file:; media-src 'self' data: blob: file:;" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShotNote</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <section id="editorShell" class="editor-shell hidden">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark">S</div>
+            <div>
+              <div class="brand-title">ShotNote</div>
+              <div class="brand-subtitle">奶白色截图批注</div>
+            </div>
+          </div>
+          <div class="toolbar" id="toolbar">
+            <div class="tool-group">
+              <button class="tool-btn active" data-tool="pen">画笔</button>
+              <button class="tool-btn" data-tool="highlighter">高亮</button>
+              <button class="tool-btn" data-tool="rect">矩形</button>
+              <button class="tool-btn" data-tool="arrow">箭头</button>
+              <button class="tool-btn" data-tool="text">文字</button>
+              <button class="tool-btn" data-tool="mosaic">马赛克</button>
+              <button class="tool-btn" data-tool="blur">模糊</button>
+              <button class="tool-btn" data-tool="hand">拖拽</button>
+            </div>
+            <div class="tool-group">
+              <button class="tool-btn" id="fitBtn">适应</button>
+              <button class="tool-btn" id="zoomOutBtn">-</button>
+              <button class="tool-btn" id="zoomInBtn">+</button>
+              <button class="tool-btn" id="undoBtn">撤销</button>
+              <button class="tool-btn" id="redoBtn">重做</button>
+              <button class="tool-btn" id="ocrBtn">OCR</button>
+            </div>
+            <div class="tool-group">
+              <button class="tool-btn primary" id="newShotBtn">新建截图</button>
+              <button class="tool-btn primary" id="copyBtn">复制</button>
+              <button class="tool-btn primary" id="saveBtn">导出 PNG</button>
+            </div>
+          </div>
+        </header>
+
+        <main class="workspace">
+          <aside class="sidebar">
+            <div class="panel">
+              <div class="panel-title">样式</div>
+              <div class="swatches" id="colorSwatches"></div>
+              <div class="slider-row">
+                <label for="sizeRange">线宽</label>
+                <input id="sizeRange" type="range" min="2" max="28" value="6" />
+              </div>
+              <div class="slider-row">
+                <label for="ocrLang">OCR</label>
+                <select id="ocrLang">
+                  <option value="chi_sim+eng">中文 + 英文</option>
+                  <option value="chi_sim">中文</option>
+                  <option value="eng">English</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="panel history-panel">
+              <div class="panel-header">
+                <div class="panel-title">历史记录</div>
+                <button class="link-btn" id="refreshHistoryBtn">刷新</button>
+              </div>
+              <div class="history-list" id="historyList"></div>
+            </div>
+          </aside>
+
+          <section class="stage-shell">
+            <div class="stage-header">
+              <div id="statusText">选择“新建截图”开始，或拖入图片直接编辑。</div>
+              <div class="zoom-pill" id="zoomPill">100%</div>
+            </div>
+            <div class="stage" id="stage">
+              <canvas id="previewCanvas"></canvas>
+              <div id="emptyState" class="empty-state">
+                <div class="empty-title">开始截图批注</div>
+                <div class="empty-subtitle">按 `Ctrl + Alt + Shift + S`，或点击“新建截图”。</div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </section>
+
+      <section id="captureShell" class="capture-shell hidden">
+        <div class="capture-backdrop"></div>
+        <div class="capture-hint">拖动选择区域，松开后进入批注。按 Esc 取消。</div>
+        <div id="captureSelection" class="capture-selection hidden"></div>
+        <div id="captureCrosshair" class="capture-crosshair"></div>
+      </section>
+    </div>
+    <script src="./renderer.js"></script>
+  </body>
+</html>
