@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="ShotNote icon">
+  <defs>
+    <linearGradient id="shell" x1="46" y1="22" x2="210" y2="238" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.58" stop-color="#fffaf2"/>
+      <stop offset="1" stop-color="#efe3d3"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="44" y1="28" x2="214" y2="230" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fbf4ea"/>
+      <stop offset="0.42" stop-color="#d7bd9c"/>
+      <stop offset="1" stop-color="#a97147"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="70" y1="170" x2="192" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9d623d"/>
+      <stop offset="1" stop-color="#d59a67"/>
+    </linearGradient>
+    <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#5f4937" flood-opacity="0.18"/>
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#ffffff" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <rect x="24" y="20" width="208" height="216" rx="58" fill="url(#rim)" filter="url(#softShadow)"/>
+  <rect x="32" y="28" width="192" height="200" rx="50" fill="url(#shell)"/>
+  <rect x="47" y="44" width="162" height="168" rx="38" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.7"/>
+
+  <path d="M82 104V82c0-7 5-12 12-12h24" fill="none" stroke="#2c2925" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M174 104V82c0-7-5-12-12-12h-24" fill="none" stroke="#2c2925" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M82 152v22c0 7 5 12 12 12h24" fill="none" stroke="#2c2925" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M174 152v22c0 7-5 12-12 12h-24" fill="none" stroke="#2c2925" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M79 157c25-31 60-39 92-12" fill="none" stroke="url(#mark)" stroke-width="18" stroke-linecap="round"/>
+  <path d="M164 126l24 21-18 22-24-21z" fill="url(#mark)"/>
+  <path d="M184 146l10 9-13 5z" fill="#2c2925"/>
+  <circle cx="128" cy="128" r="10" fill="#fffaf2" stroke="#2c2925" stroke-width="7"/>
+</svg>

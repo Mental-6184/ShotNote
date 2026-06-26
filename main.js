@@ -51,22 +51,26 @@ function saveHistoryRecord(record) {
 }
 
 function buildAppIcon() {
+  const candidates = [
+    path.join(__dirname, 'assets', 'icon.ico'),
+    path.join(__dirname, 'assets', 'icon.png')
+  ];
+
+  for (const iconPath of candidates) {
+    if (!fs.existsSync(iconPath)) continue;
+    const image = nativeImage.createFromPath(iconPath);
+    if (!image.isEmpty()) return image;
+  }
+
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
-      <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#fbf7f0"/>
-          <stop offset="100%" stop-color="#eee0cf"/>
-        </linearGradient>
-      </defs>
-      <rect x="24" y="28" width="208" height="200" rx="56" fill="url(#g)" stroke="#d6c5b1" stroke-width="10"/>
-      <rect x="66" y="70" width="124" height="84" rx="24" fill="#fffdf9" stroke="#cbb79e" stroke-width="8"/>
-      <path d="M92 122h72" stroke="#bd8658" stroke-width="14" stroke-linecap="round"/>
-      <path d="M144 94l28 28-28 28" fill="none" stroke="#bd8658" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="24" y="20" width="208" height="216" rx="58" fill="#fffaf2" stroke="#b8865b" stroke-width="12"/>
+      <path d="M82 104V82h36M174 104V82h-36M82 152v22h36M174 152v22h-36" fill="none" stroke="#2c2925" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M79 157c25-31 60-39 92-12" fill="none" stroke="#c98b57" stroke-width="18" stroke-linecap="round"/>
+      <circle cx="128" cy="128" r="10" fill="#fffaf2" stroke="#2c2925" stroke-width="7"/>
     </svg>`;
   return nativeImage.createFromDataURL(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`);
 }
-
 function createMainWindow() {
   if (mainWindow && !mainWindow.isDestroyed()) return mainWindow;
 
@@ -306,7 +310,6 @@ ipcMain.handle('app:open-path', async (_event, filePath) => {
 ipcMain.handle('app:show-in-folder', async (_event, filePath) => {
   if (!filePath) return false;
   shell.showItemInFolder(filePath);
-  return true;
 });
 
 ipcMain.on('app:request-capture', () => {
@@ -318,11 +321,10 @@ ipcMain.on('app:capture-cancelled', (_event, token) => {
   closeCaptureWindows();
 });
 
-ipcMain.handle('app:capture-complete', async (_event, payload) => {
+ipcMain.on('app:capture-complete', (_event, payload) => {
   if (!payload || Number(payload.token) !== currentCaptureToken) return;
   closeCaptureWindows();
   deliverCapturedImage(payload);
-  return true;
 });
 
 ipcMain.on('app:show-capture-window', (event) => {
@@ -333,6 +335,19 @@ ipcMain.on('app:show-capture-window', (event) => {
 
 ipcMain.handle('app:get-capture-snapshot', async (_event, displayId) => {
   return captureDisplaySnapshot(displayId);
+});
+
+ipcMain.handle('app:get-display-info', async (_event, displayId) => {
+  const displays = getDisplayWindows();
+  const target = displays.find((item) => String(item.id) === String(displayId)) || screen.getPrimaryDisplay();
+  return target
+    ? {
+        id: target.id,
+        label: `Display ${target.id}`,
+        bounds: target.bounds,
+        scaleFactor: target.scaleFactor
+      }
+    : null;
 });
 
 ipcMain.on('app:log', (_event, message) => {

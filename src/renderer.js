@@ -1,4 +1,4 @@
-const { ipcRenderer, screen, clipboard, nativeImage } = require('electron');
+const { ipcRenderer, clipboard, nativeImage } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
@@ -35,7 +35,8 @@ const state = {
   ocrLang: 'chi_sim+eng',
   captureSelection: null,
   activeTextComposer: null,
-  captureSnapshotDataUrl: ''
+  captureSnapshotDataUrl: '',
+  captureDisplayInfo: null
 };
 
 const els = {};
@@ -1011,8 +1012,15 @@ async function finishCaptureFlow() {
     state.captureSnapshotDataUrl = await ipcRenderer.invoke('app:get-capture-snapshot', state.captureDisplayId);
   }
 
-  const display = screen.getAllDisplays().find((item) => String(item.id) === String(state.captureDisplayId))
-    || screen.getPrimaryDisplay();
+  if (!state.captureDisplayInfo) {
+    state.captureDisplayInfo = await ipcRenderer.invoke('app:get-display-info', state.captureDisplayId);
+  }
+
+  const display = state.captureDisplayInfo;
+  if (!display?.bounds) {
+    throw new Error('Display information unavailable');
+  }
+
   const image = await loadImageElement(state.captureSnapshotDataUrl);
   const scaleX = image.naturalWidth / display.bounds.width;
   const scaleY = image.naturalHeight / display.bounds.height;
@@ -1030,14 +1038,16 @@ async function finishCaptureFlow() {
     crop.height
   );
 
-  await ipcRenderer.invoke('app:capture-complete', {
+  ipcRenderer.send('app:capture-complete', {
     token: state.captureToken,
     displayId: state.captureDisplayId,
     displayLabel: '显示器 ' + display.id,
     dataUrl: crop.toDataURL('image/png'),
     bounds
   });
-  window.close();
+  setTimeout(() => {
+    window.close();
+  }, 150);
 }
 
 async function initCaptureMode() {
@@ -1047,7 +1057,12 @@ async function initCaptureMode() {
   els.captureSelection.style.display = 'block';
 
   try {
-    state.captureSnapshotDataUrl = await ipcRenderer.invoke('app:get-capture-snapshot', state.captureDisplayId);
+    const [snapshotDataUrl, displayInfo] = await Promise.all([
+      ipcRenderer.invoke('app:get-capture-snapshot', state.captureDisplayId),
+      ipcRenderer.invoke('app:get-display-info', state.captureDisplayId)
+    ]);
+    state.captureSnapshotDataUrl = snapshotDataUrl;
+    state.captureDisplayInfo = displayInfo;
     setCaptureBackdropPreview(state.captureSnapshotDataUrl);
     ipcRenderer.send('app:show-capture-window');
   } catch (error) {
@@ -1076,7 +1091,13 @@ async function initCaptureMode() {
     if (!dragging) return;
     dragging = false;
     updateSelectionElement(startX, startY, event.clientX, event.clientY);
-    await finishCaptureFlow();
+    try {
+      await finishCaptureFlow();
+    } catch (error) {
+      console.error(error);
+      showToast('截图失败：' + error.message, 5000);
+      ipcRenderer.send('app:log', 'capture failed: ' + error.message);
+    }
   };
 
   window.addEventListener('mousedown', onDown);

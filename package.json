@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
+    "icons": "powershell -ExecutionPolicy Bypass -File tools/generate-icons.ps1",
     "pack": "electron-builder --dir",
     "build": "electron-builder"
   },
@@ -29,6 +30,7 @@
       "**/*"
     ],
     "win": {
+      "icon": "assets/icon.ico",
       "target": [
         "nsis"
       ]
