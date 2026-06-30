@@ -59,6 +59,7 @@ ShotNote/
 |-- main.js                  Electron main process
 |-- package.json             Project config and scripts
 |-- Start ShotNote.vbs       Double-click startup helper for Windows
+|-- LICENSE                  Repository license
 `-- README.md
 ```
 
@@ -208,4 +209,4 @@ dist/
 
 ## License
 
-No standalone license file is currently included in the repository. If you plan to publish or distribute this project publicly, adding an explicit license is recommended.
+This repository includes a `LICENSE` file. Please refer to it directly for the current license terms.
