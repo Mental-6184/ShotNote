@@ -1,176 +1,242 @@
 # ShotNote
 
-> A polished Windows screenshot annotation desktop app built with Electron.
+> 一款基于 Electron 构建的 Windows 截图标注工具，专注于更快的截图、批注、识别与导出体验。
 
-ShotNote is a lightweight screenshot and markup tool focused on fast communication and clean visual feedback. It supports global screenshot capture, multi-display region selection, rich annotation tools, OCR text extraction, PNG export, clipboard copy, and local history review in one desktop workflow.
+ShotNote 面向日常沟通、问题反馈、产品说明、测试提单、教程整理等场景，提供从截图、选区、标注、OCR 到导出的一体化桌面工作流。你可以在截完图后立即进入编辑界面，对图像进行高亮、框选、箭头说明、文字补充、模糊处理、马赛克处理，并将结果复制到剪贴板或导出为 PNG 文件。
 
-## Highlights
+## 项目简介
 
-- Global shortcut capture: `Ctrl + Alt + Shift + S`
-- Multi-monitor screenshot selection
-- Instant jump from capture to annotation editor
-- Annotation tools:
-  - Pen
-  - Highlighter
-  - Rectangle
-  - Arrow
-  - Text
-  - Mosaic
-  - Blur
-  - Hand / pan
-- Undo, redo, zoom, and fit-to-screen controls
-- OCR recognition with `Chinese + English`, `Chinese`, or `English`
-- Copy annotated image directly to clipboard
-- Export final result as PNG
-- Built-in local history panel for reopening previous exports
-- Drag and drop local images into the editor for continued markup
-- Tray integration for quick access on Windows
+在很多工作流里，截图不是终点，而只是表达问题的起点。ShotNote 试图解决的不是“截一张图”，而是“快速把图说明白”。
 
-## Preview
+相比只提供基础截图功能的工具，ShotNote 更强调以下几个点：
 
-ShotNote uses a warm desktop-style interface designed for frequent screenshot work:
+- 截图后立即进入编辑，不打断思路
+- 标注工具集中，适合说明问题和整理信息
+- 支持 OCR 识别，把图片中的文字提取出来继续处理
+- 支持历史记录回看，方便重复使用和二次编辑
+- 支持把本地图片拖入编辑器继续标注，不局限于新截图
+- 提供系统托盘和全局快捷键，方便常驻使用
 
-- Left sidebar for style controls, OCR language, and export history
-- Central canvas for screenshot preview and annotation
-- Top action bar for tools, zoom, OCR, copy, export, and new capture
-- Full-screen capture overlay for precise region selection
+## 功能特性
 
-If you want, you can later add screenshots or GIF demos under this section for a more visual GitHub landing page.
+### 1. 全局快捷键截图
 
-## Tech Stack
-
-- Electron
-- `screenshot-desktop`
-- `tesseract.js`
-- `electron-builder`
-
-## Project Structure
-
-```text
-ShotNote/
-|-- assets/                  App icons and visual assets
-|-- dist/                    Build output directory
-|-- src/
-|   |-- index.html           Renderer window structure
-|   |-- renderer.js          Editor and capture interaction logic
-|   `-- styles.css           Application styles
-|-- tools/
-|   `-- generate-icons.ps1   Icon generation script
-|-- main.js                  Electron main process
-|-- package.json             Project config and scripts
-|-- Start ShotNote.vbs       Double-click startup helper for Windows
-|-- LICENSE                  Repository license
-`-- README.md
-```
-
-## Features In Detail
-
-### 1. Fast Screenshot Capture
-
-ShotNote registers a global shortcut so you can start a new screenshot from anywhere:
+应用启动后会注册全局快捷键：
 
 ```text
 Ctrl + Alt + Shift + S
 ```
 
-Once triggered, the app opens a transparent capture overlay on every display and lets you drag-select the region you want.
+无论当前正在使用什么窗口，都可以直接发起一次新的截图操作。
 
-### 2. Annotation Workflow
+### 2. 多屏幕区域截图
 
-After capture, the image is opened directly in the editor, where you can:
+当设备连接多个显示器时，ShotNote 会在每个显示器上创建截图覆盖层，支持分别选择需要截取的区域，适合双屏、三屏办公场景。
 
-- Draw freehand notes
-- Highlight key areas
-- Add boxes and arrows
-- Insert text explanations
-- Obfuscate sensitive information with mosaic or blur
-- Pan and zoom around large screenshots
+### 3. 截图后直接进入编辑
 
-### 3. OCR Recognition
+用户完成选区后，截图内容会立即载入主编辑器，无需额外保存、打开或切换工具，适合快速反馈问题和即时标注。
 
-ShotNote can recognize text from the current annotated image using Tesseract. OCR results can be inserted back into the canvas as editable text content.
+### 4. 丰富的标注工具
 
-Supported language presets:
+当前内置以下标注能力：
 
-- `chi_sim+eng`
-- `chi_sim`
-- `eng`
+- `画笔`：适合自由圈画、手写说明
+- `高亮`：适合强调区域，视觉更柔和
+- `矩形`：适合框出重点内容
+- `箭头`：适合指示操作位置或逻辑方向
+- `文字`：适合添加说明、注释、备注
+- `马赛克`：适合隐藏敏感信息
+- `模糊`：适合做更柔和的信息脱敏
+- `拖拽`：适合在大图上平移查看内容
 
-### 4. Export And Reuse
+### 5. 画布缩放与视图控制
 
-You can:
+编辑大尺寸截图时，ShotNote 支持：
 
-- Copy the final image to the system clipboard
-- Export to PNG
-- Reopen past exported images from the built-in history list
-- Drag local screenshots back into the editor for additional annotation
+- 放大
+- 缩小
+- 适应窗口
+- 空格临时平移视图
+- `Ctrl + 鼠标滚轮` 缩放画布
 
-### 5. Local History
+这让大图标注、细节查看和局部调整更顺手。
 
-Exports are stored in the Electron user data directory under a local `history` folder, along with an index file for browsing previous records inside the app.
+### 6. OCR 文字识别
 
-## Keyboard Shortcuts
+ShotNote 集成了 `tesseract.js`，可以对当前图像内容执行 OCR 识别，并将识别结果作为可编辑文字继续插入画布。
 
-| Shortcut | Action |
+支持的语言预设包括：
+
+- `chi_sim+eng`：中文 + 英文
+- `chi_sim`：中文
+- `eng`：英文
+
+适合从截图中提取报错信息、界面文案、表格内容或其他可识别文本。
+
+### 7. 导出与剪贴板复制
+
+完成标注后，你可以选择：
+
+- `复制`：直接复制最终图片到系统剪贴板
+- `导出 PNG`：将最终结果保存为 PNG 文件
+
+这样既适合快速粘贴到聊天工具、文档、邮件里，也适合长期保存。
+
+### 8. 历史记录管理
+
+应用会自动保存导出记录，并在左侧历史面板中展示。你可以：
+
+- 查看过去导出的截图记录
+- 点击重新打开某条记录
+- 右键在系统资源管理器中定位文件
+
+这对于复盘截图、二次修改、查找以前导出的内容非常有帮助。
+
+### 9. 本地图片二次标注
+
+除了新截图之外，ShotNote 还支持把本地图片直接拖入编辑器，继续进行标注。适合：
+
+- 修改以前导出的图片
+- 给同事发来的截图继续补充说明
+- 给设计稿、原型图或文档截图做附加标记
+
+### 10. 托盘常驻
+
+应用带有系统托盘功能，可常驻后台运行，便于随时截图。关闭主窗口时不会立即退出应用，而是隐藏到后台。
+
+## 界面说明
+
+ShotNote 的界面分为三个主要区域：
+
+### 顶部工具栏
+
+用于切换工具和执行常用操作，包括：
+
+- 标注工具切换
+- 缩放控制
+- 撤销 / 重做
+- OCR 识别
+- 新建截图
+- 复制结果
+- 导出 PNG
+
+### 左侧边栏
+
+用于控制样式和查看历史记录，包括：
+
+- 颜色选择
+- 线宽调整
+- OCR 语言切换
+- 导出历史记录列表
+
+### 中央画布区域
+
+用于展示截图、执行标注、缩放查看和拖拽浏览，是核心编辑区域。
+
+### 截图覆盖层
+
+发起截图后，应用会进入全屏透明覆盖层模式，用于框选截图区域。选择完成后自动进入编辑器。
+
+## 快捷键说明
+
+| 快捷键 | 作用 |
 |---|---|
-| `Ctrl + Alt + Shift + S` | Start a new screenshot |
-| `Ctrl + Z` | Undo |
-| `Ctrl + Shift + Z` | Redo |
-| `Ctrl + Y` | Redo |
-| `Ctrl + 0` | Fit to screen |
-| `Ctrl + Mouse Wheel` | Zoom canvas |
-| `Esc` | Cancel capture or close text input |
-| `Space` | Temporarily pan while dragging |
+| `Ctrl + Alt + Shift + S` | 新建截图 |
+| `Ctrl + Z` | 撤销 |
+| `Ctrl + Shift + Z` | 重做 |
+| `Ctrl + Y` | 重做 |
+| `Ctrl + 0` | 适应窗口 |
+| `Ctrl + 鼠标滚轮` | 缩放画布 |
+| `Esc` | 取消截图或关闭文字输入 |
+| `Space` | 临时切换为拖拽视图 |
 
-## Requirements
+## 使用场景
+
+ShotNote 适合但不限于以下场景：
+
+- 产品经理整理需求截图并添加说明
+- 测试同学提交 Bug 时标出异常位置
+- 开发同学记录报错信息并进行圈画说明
+- 运营同学整理活动页面或后台配置截图
+- 教学演示中对某个界面进行步骤说明
+- 客服或售后在沟通中快速标记用户问题位置
+
+## 运行环境
 
 - Windows
-- Node.js 18+
+- Node.js 18 及以上版本
 - npm
 
-## Installation
+## 安装依赖
+
+在项目根目录执行：
 
 ```bash
 npm install
 ```
 
-## Run In Development
+安装完成后即可运行开发版本。
+
+## 启动方式
+
+### 方式一：命令行启动
 
 ```bash
 npm start
 ```
 
-This launches the Electron desktop app locally.
+或：
 
-## Windows Quick Start
+```bash
+npm run dev
+```
 
-If you want to start the app by double-clicking a file on Windows, you can use:
+这会直接启动 Electron 桌面应用。
+
+### 方式二：Windows 双击启动
+
+项目中提供了一个辅助启动文件：
 
 ```text
 Start ShotNote.vbs
 ```
 
-## Build
+在合适环境下，可以通过双击这个文件快速启动应用。
 
-Generate icon assets:
+## 打包构建
+
+### 生成图标资源
 
 ```bash
 npm run icons
 ```
 
-Build installable output:
+该脚本会调用：
 
-```bash
-npm run build
+```text
+tools/generate-icons.ps1
 ```
 
-Build unpacked application directory only:
+用于生成或更新应用图标资源。
+
+### 构建未打包目录
 
 ```bash
 npm run pack
 ```
 
-Build artifacts are written to:
+适合本地检查构建产物，但不会生成最终安装包。
+
+### 构建安装包
+
+```bash
+npm run build
+```
+
+该命令会通过 `electron-builder` 生成 Windows 安装包。
+
+默认输出目录：
 
 ```text
 dist/
@@ -178,35 +244,118 @@ dist/
 
 ## npm Scripts
 
-| Script | Description |
+| 命令 | 说明 |
 |---|---|
-| `npm start` | Start the Electron app |
-| `npm run dev` | Run the app in development mode |
-| `npm run icons` | Generate or refresh icon assets |
-| `npm run pack` | Build unpacked app output |
-| `npm run build` | Build distributable installer |
+| `npm start` | 启动 Electron 应用 |
+| `npm run dev` | 以开发模式运行应用 |
+| `npm run icons` | 生成或更新图标资源 |
+| `npm run pack` | 构建未打包目录 |
+| `npm run build` | 构建可分发安装包 |
 
-## Typical Usage Flow
+## 使用流程
 
-1. Press `Ctrl + Alt + Shift + S` or click `New Screenshot`.
-2. Drag to select the screen area you want.
-3. The selected region opens in the editor automatically.
-4. Add annotations with the tools you need.
-5. Run OCR if you want to extract text from the image.
-6. Copy the result to clipboard or export it as PNG.
-7. Reopen previous outputs anytime from the history panel.
+一个典型的使用流程如下：
 
-## Notes
+1. 启动 ShotNote。
+2. 按下 `Ctrl + Alt + Shift + S`，或在主界面点击“新建截图”。
+3. 在目标屏幕上拖拽选择需要截取的区域。
+4. 截图内容会自动进入编辑器。
+5. 使用画笔、高亮、矩形、箭头、文字、模糊或马赛克等工具进行标注。
+6. 如有需要，可执行 OCR 提取图中文字。
+7. 点击“复制”将结果写入剪贴板，或点击“导出 PNG”保存。
+8. 后续可以在历史记录中重新打开这张图继续查看或修改。
 
-- This project is currently tailored for Windows usage.
-- OCR may need extra time on first run because recognition resources must load.
-- Export history is stored locally and may grow over time if not cleaned periodically.
-- The application currently uses Electron renderer features such as `nodeIntegration`, so it is aimed at desktop distribution rather than hardened browser-style security constraints.
+## 项目结构
 
-## Repository
+```text
+ShotNote/
+|-- assets/                  图标与静态资源
+|-- dist/                    构建输出目录
+|-- src/
+|   |-- index.html           渲染进程页面结构
+|   |-- renderer.js          编辑器与截图交互逻辑
+|   `-- styles.css           界面样式
+|-- tools/
+|   `-- generate-icons.ps1   图标生成脚本
+|-- main.js                  Electron 主进程入口
+|-- package.json             项目配置与脚本定义
+|-- package-lock.json        依赖锁定文件
+|-- Start ShotNote.vbs       Windows 启动辅助脚本
+|-- LICENSE                  仓库许可证文件
+`-- README.md                项目说明文档
+```
+
+## 核心实现说明
+
+### 主进程
+
+主进程代码位于：
+
+- `main.js`
+
+主要负责：
+
+- 创建主窗口
+- 创建系统托盘
+- 注册全局快捷键
+- 管理多显示器截图窗口
+- 保存导出记录
+- 处理与渲染进程之间的 IPC 通信
+
+### 渲染进程
+
+渲染进程代码位于：
+
+- `src/index.html`
+- `src/renderer.js`
+- `src/styles.css`
+
+主要负责：
+
+- 工具栏与界面交互
+- 画布绘制与标注逻辑
+- OCR 调用
+- 历史记录展示
+- 截图选区与图像预览
+
+### 本地历史记录
+
+应用会将导出的 PNG 文件和索引信息保存到 Electron 用户数据目录下的 `history` 目录中，用于后续回看和重新打开。
+
+## 技术栈
+
+- Electron
+- `screenshot-desktop`
+- `tesseract.js`
+- `electron-builder`
+
+## 当前特点与限制
+
+在当前版本中，需要注意以下几点：
+
+- 项目主要面向 Windows 使用场景
+- OCR 首次运行时可能需要加载识别资源，因此速度会稍慢
+- 历史记录会持续保存在本地，使用时间长了建议手动清理
+- 当前渲染进程启用了 `nodeIntegration`，适合桌面应用分发，但不属于高隔离安全配置
+- 项目目前没有单独的自动化测试体系说明
+
+## 后续可扩展方向
+
+如果后续继续迭代，这个项目还可以考虑增加：
+
+- 更多标注图形，例如圆形、编号标签、直线
+- 可自定义快捷键
+- 导出 JPG / WebP
+- 一键复制 OCR 文本
+- 历史记录搜索与删除
+- 截图后自动保存到指定目录
+- 云同步或团队共享能力
+- 更完善的设置面板
+
+## 仓库地址
 
 - GitHub: [Mental-6184/ShotNote](https://github.com/Mental-6184/ShotNote)
 
-## License
+## 许可证
 
-This repository includes a `LICENSE` file. Please refer to it directly for the current license terms.
+本仓库已包含 `LICENSE` 文件，具体授权方式请直接查看仓库中的许可证内容。
